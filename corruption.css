@@ -1,0 +1,393 @@
+/* corruption.css
+   -------------------------------------------------------------------
+   Visual effects for the corruption ending sequence:
+   the black fog overlay, the shaking/glitching spam ads, the
+   "Looking away is never the answer" gate button, and the final
+   "What's new" panel.
+
+   Paste this alongside style.css and link it in <head>, AFTER
+   style.css so it can safely override anything it needs to.
+   ------------------------------------------------------------------- */
+
+/* ---------- FOG OVERLAY ---------- */
+/* Sits above regular page content but below the spam ads (z-index),
+   so the loud red ads stay legible while the page behind them sinks
+   into black over the full 10-second corruption window. */
+#fog-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: radial-gradient(circle at 50% 40%, rgba(10, 0, 20, 0.85), #000 85%);
+
+  opacity: 0;
+  z-index: 500;
+  pointer-events: none;
+
+  transition: opacity 10s linear;
+}
+
+#fog-overlay.fog-active {
+  opacity: 0.94;
+}
+
+/* ---------- SPAM ADS ---------- */
+.spam-ad {
+  position: fixed;
+  z-index: 9999;
+
+  background: #d62d28;
+  color: white;
+  border: 4px solid #1a1a1a;
+
+  box-sizing: border-box;
+  padding: 22px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  font-size: clamp(16px, 2.4vw, 28px);
+  line-height: 1.25;
+  text-align: center;
+
+  transform: rotate(var(--rot, 0deg));
+
+  animation:
+    spamShake 0.28s infinite steps(2, end),
+    spamGlitch 1.1s infinite;
+}
+
+@keyframes spamShake {
+  0%   { transform: translate(0, 0) rotate(var(--rot, 0deg)); }
+  25%  { transform: translate(-3px, 2px) rotate(calc(var(--rot, 0deg) - 1deg)); }
+  50%  { transform: translate(3px, -2px) rotate(calc(var(--rot, 0deg) + 1deg)); }
+  75%  { transform: translate(-2px, -3px) rotate(var(--rot, 0deg)); }
+  100% { transform: translate(0, 0) rotate(var(--rot, 0deg)); }
+}
+
+@keyframes spamGlitch {
+  0%, 100% {
+    text-shadow: 2px 0 #00f7ff, -2px 0 #ff00c8;
+    clip-path: inset(0 0 0 0);
+  }
+  20% {
+    text-shadow: -3px 0 #00f7ff, 3px 0 #ff00c8;
+    clip-path: inset(10% 0 15% 0);
+  }
+  40% {
+    text-shadow: 3px 0 #00f7ff, -3px 0 #ff00c8;
+    clip-path: inset(40% 0 5% 0);
+  }
+  60% {
+    text-shadow: -2px 0 #00f7ff, 2px 0 #ff00c8;
+    clip-path: inset(5% 0 40% 0);
+  }
+  80% {
+    text-shadow: 2px 0 #00f7ff, -2px 0 #ff00c8;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---------- "LOOKING AWAY" GATE BUTTON ---------- */
+#look-away-btn {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+
+  z-index: 10001; /* above everything, including the spam ads */
+
+  padding: 18px 32px;
+
+  background: #3700C0;
+  color: white;
+  border: 3px solid white;
+
+  font-family: Georgia, serif;
+  font-size: clamp(14px, 1.6vw, 20px);
+  font-weight: bold;
+
+  cursor: pointer;
+
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+
+  box-shadow: 0 0 0 4px rgba(214, 45, 40, 0.6);
+}
+
+#look-away-btn.look-away-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#look-away-btn:hover {
+  background: #2a0090;
+}
+
+/* ---------- FINAL PANEL ---------- */
+.finalPanel {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 40px 20px;
+
+  background: #f4f4f4;
+  font-family: Georgia, serif;
+}
+
+.finalPanel-card {
+  max-width: 800px;
+
+  padding: 40px;
+
+  background: white;
+  border: 2px solid #3700C0;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.finalPanel-card h1 {
+  margin-top: 0;
+  padding-bottom: 10px;
+
+  border-bottom: 2px solid #3700C0;
+
+  color: #3700C0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.finalPanel-card p {
+  margin-bottom: 20px;
+
+  color: #333;
+  line-height: 1.8;
+}
+
+.finalPanel-contact {
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+
+  margin-top: 30px;
+  padding: 25px;
+
+  background: #e9e7df;
+  border-left: 6px solid #3700C0;
+}
+
+.finalPanel-contact h3 {
+  margin-top: 0;
+
+  color: #3700C0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.finalPanel-contact p {
+  margin: 5px 0;
+}
+
+.finalPanel-note {
+  margin-top: 15px !important;
+}
+
+
+
+/* ==========================================================================
+
+   MODAL CLASSES (Cleaned of inline styles)
+
+   ========================================================================== */
+
+.modal-overlay {
+
+  position: fixed;
+
+  top: 0;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: 0;
+
+  background-color: rgba(30, 30, 30, 0.8);
+
+  z-index: 1000;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+}
+
+.modal-overlay.hidden {
+
+  display: none;
+
+}
+
+.modal-box {
+
+  background-color: #FFF;
+
+  border: 4px solid var(--purple);
+
+  width: 600px;
+
+  max-width: 90%;
+
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.8);
+
+}
+
+.modal-header {
+
+  background-color: var(--purple);
+
+  color: #FFF;
+
+  padding: 10px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  font-weight: bold;
+
+}
+
+.close-btn {
+
+  background-color: #F8F9F1;
+
+  border: 1px solid var(--dark);
+
+  color: var(--dark);
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  padding: 2px 6px;
+
+}
+
+.modal-content {
+
+  padding: 20px;
+
+  line-height: 1.6;
+
+  max-height: 70vh;
+
+  overflow-y: auto;
+
+  background: #111;
+
+  color: #eee;
+
+}
+
+.modal-main-heading {
+
+  color: #fff;
+
+  font-family: "Times New Roman", serif;
+
+  font-size: 2.2em;
+
+  text-align: center;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+}
+
+.cta-title {
+
+  color: #bbb;
+
+  margin-top: 0;
+
+  border-bottom: 1px solid #444;
+
+  padding-bottom: 5px;
+
+}
+
+.modal-content p {
+
+  font-size: 1.05em;
+
+  line-height: 1.6;
+
+  color: #ccc;
+
+}
+
+.medical-info-box {
+
+  background: #1a1a1a;
+
+  border-left: 4px solid var(--purple);
+
+  padding: 15px;
+
+  margin: 25px 0;
+
+}
+
+.medical-info-box h3 {
+
+  color: #fff;
+
+  margin-top: 0;
+
+  font-family: Arial, sans-serif;
+
+}
+
+.medical-info-box p {
+
+  margin-bottom: 10px;
+
+  color: #ccc;
+
+}
+
+.medical-info-box ul {
+
+  color: #ccc;
+
+  margin-top: 5px;
+
+  line-height: 1.6;
+
+}
+
+.highlight-text {
+
+  color: #fff;
+
+  font-weight: bold;
+
+}
+
+.about-us-text {
+
+  color: #888;
+
+  font-size: 0.9em;
+
+  border-top: 1px solid #444;
+
+  padding-top: 15px;
+
+}
+
+

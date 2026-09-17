@@ -1,0 +1,254 @@
+# Amigos! Blog UI
+
+Giao diện web phong cách Yahoo/Facebook/Game 2010s, sử dụng **HTML, CSS và p5.js**.
+
+## 1. Các file chính
+
+```text
+index.html       → Nội dung và cấu trúc UI
+style.css        → Màu sắc, kích thước, layout, font, border
+sketch.js        → p5.js chính trong .mainCanvas
+sketchUI.js      → Các p5.js khác, ví dụ banner
+assets/          → Hình ảnh
+designed-sounds/ → Âm thanh
+```
+
+---
+
+## 2. Thay đổi từng Box
+
+Các box nằm trong 3 column:
+
+```html
+.left-column
+.centre-column
+.right-column
+```
+
+Để thêm box:
+
+```html
+<div class="box">
+  <h3>Title</h3>
+  <p>Your content here.</p>
+</div>
+```
+
+Box sẽ tự động nhận **width của column** và **height theo nội dung**.
+
+### Chỉnh style của từng Box
+
+Thêm class riêng:
+
+```html
+<div class="box my-box">
+  Content
+</div>
+```
+
+Sau đó chỉnh trong `style.css`:
+
+```css
+.my-box {
+  background: #F7CD26;
+  border: 2px solid #F8F9F1;
+  padding: 10px;
+  font-size: 14px;
+}
+```
+
+Có thể dùng các class hiện có như:
+
+```css
+.quote { ... }
+.promo { ... }
+.games { ... }
+```
+
+Không cần đặt `width` hoặc `height` cho box trừ khi thật sự cần.
+
+---
+
+## 3. ⚠️ Không thay đổi `.page` và `.layout`
+
+Hai phần này kiểm soát **toàn bộ kích thước và cấu trúc của website**.
+
+```css
+.page { ... }
+
+.layout { ... }
+```
+
+**Không thay đổi hoặc xoá các thuộc tính này** nếu không cần thiết.
+
+Đặc biệt không đặt width riêng cho từng column hoặc box, vì có thể làm hỏng responsive layout.
+
+Nếu muốn thêm nội dung, hãy thêm `<div>` vào column tương ứng và sử dụng `.box`.
+
+---
+
+# 4. Sử dụng `sketch.js`
+
+`sketch.js` dành cho **p5.js chính nằm bên trong `.mainCanvas`**.
+
+Canvas tự động lấy width của `.mainCanvas` và giữ đúng aspect ratio.
+
+```javascript
+const originalWidth = 800;
+const originalHeight = 450;
+```
+
+Hai giá trị này phải là **kích thước gốc của sketch**.
+
+### Khi đưa sketch cũ vào
+
+Copy:
+
+* Các biến → đầu `myMainCanvasSketch`
+* Code `setup()` → `p.setup`
+* Code `draw()` → `p.draw`
+
+Không thêm `createCanvas()` khác.
+
+Ví dụ sketch cũ:
+
+```javascript
+function setup() {
+  createCanvas(800, 450);
+}
+```
+
+Bỏ dòng `createCanvas()` vì canvas đã được tạo tự động.
+
+---
+
+# 5. Sử dụng `sketchUI.js`
+
+`sketchUI.js` dành cho **p5.js nằm ngoài `.mainCanvas`**.
+
+Ví dụ hiện tại là banner:
+
+```javascript
+const container = document.querySelector('.banner');
+```
+
+Có thể dùng file này để tạo:
+
+* Banner animation
+* Background animation
+* Particle effects
+* Mouse interaction
+* Hover effects
+* Sound interaction
+* Các p5.js canvas khác
+
+### Thêm một p5.js mới
+
+Tạo một sketch mới:
+
+```javascript
+const myNewSketch = (p) => {
+
+  p.setup = () => {
+    const container = document.querySelector('.my-container');
+
+    const canvas = p.createCanvas(
+      container.clientWidth,
+      container.clientHeight
+    );
+
+    canvas.parent(container);
+  };
+
+  p.draw = () => {
+    p.background('#3700C0');
+
+    // Code animation ở đây
+  };
+
+};
+
+new p5(myNewSketch);
+```
+
+Sau đó tạo container trong `index.html`:
+
+```html
+<div class="my-container"></div>
+```
+
+Canvas sẽ nằm bên trong container này.
+
+### Thêm hình ảnh
+
+Đặt hình vào:
+
+```text
+assets/
+```
+
+Sau đó load trong sketch:
+
+```javascript
+let img;
+
+p.preload = () => {
+  img = p.loadImage('assets/my-image.png');
+};
+```
+
+Dùng trong `draw()`:
+
+```javascript
+p.image(img, 0, 0, p.width, p.height);
+```
+
+### Thêm text
+
+```javascript
+p.fill('#FFFFFF');
+p.textSize(24);
+p.textFont('Georgia');
+p.text('Hello!', 20, 40);
+```
+
+### Thêm mouse interaction
+
+```javascript
+if (p.mouseIsPressed) {
+  p.fill('#F7CD26');
+  p.ellipse(p.mouseX, p.mouseY, 30, 30);
+}
+```
+
+### Thêm sound
+
+Đặt file vào:
+
+```text
+designed-sounds/
+```
+
+Sau đó:
+
+```javascript
+const sound = new Audio('designed-sounds/Sound1.wav');
+
+sound.play();
+```
+
+---
+
+## 6. Tóm tắt
+
+**Sửa nội dung UI** → `index.html`
+
+**Sửa style của box** → `style.css`
+
+**Sửa artwork/game chính** → `sketch.js`
+
+**Thêm p5.js ngoài `.mainCanvas`** → `sketchUI.js`
+
+**Sửa banner** → `sketchUI.js`
+
+**Không thay đổi `.page` và `.layout`** nếu chỉ muốn thêm hoặc chỉnh nội dung.

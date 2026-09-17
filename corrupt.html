@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.2/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/dist/p5.sound.min.js"></script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Pareidolia - SDG 3.5 Generative Art</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="corruption.css" />
+  </head>
+
+  <body>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-inner">
+        <strong>Amigos 4.0</strong>
+
+        <nav>
+          <div class="navBtn"><a href="#">Search</a></div>
+          <div class="navBtn active"><a href="#">Blog</a></div>
+          <div class="navBtn"><a href="#">Games</a></div>
+          <div class="navBtn"><a href="#">Messenger</a></div>
+        </nav>
+
+        <button>What's New?</button>
+      </div>
+    </div>
+
+    <main class="page">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="brand">AMIGOS!<span>Messenger</span></div>
+
+        <div class="search">
+          <label>Search the Web:</label>
+          <input placeholder="Search..." />
+          <button>Search</button>
+        </div>
+
+        <nav class="main-nav">
+          <a>Home</a>
+          <a>My Page</a>
+          <a>My Blog</a>
+          <a>My Friends</a>
+          <a>Mailbox</a>
+          <a>Settings</a>
+        </nav>
+      </header>
+
+      <!-- BANNER -->
+      <div class="banner"></div>
+
+      <!-- MAIN LAYOUT -->
+      <section class="layout">
+        <!-- LEFT COLUMN -->
+        <aside class="left-column">
+          <div class="ad box">
+            <small>ADVERTISEMENT</small>
+            <h4>TIN NONG!!!! Trung 10 ti dong ngay lap tuc</h4>
+            <button>CLICK HERE</button>
+          </div>
+
+          <div class="comments box">
+            <h2>TOP FORUM COMMENTER</h2>
+            <p>Toicantrogiup: co ai biet cac co so giup do cac ban tre nghien ma tuy o HCM k0?</p>
+          </div>
+        </aside>
+
+        <!-- CENTRE COLUMN -->
+        <section class="centre-column">
+          <div class="mainCanvas"></div>
+          <div class="footer">
+            <p>COMM2754, Digital Media Specialisation 1, Semester 2 2026</p>
+          </div>
+        </section>
+
+        <!-- RIGHT COLUMN -->
+        <aside class="right-column">
+          <div class="quote box">
+            <h3>A good quote for a new day</h3>
+            <p>"I finally summed up the courage to say the words that would change my life: I need help."</p>
+            <p>- Elton John</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <!-- UI, Corruption logic, and Sketch Execution -->
+    <script src="sketchUI.js"></script>
+    <script src="corruption.js"></script>
+    <script src="sketchCorrupt.js"></script>
+  </body>
+</html>

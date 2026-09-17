@@ -1,0 +1,293 @@
+const myMainCanvasSketch = (p) => {
+  let aspectRatio;
+
+  // Global variables & asset arrays
+  let portraitImgs = [];
+  let elementImgs = [];
+
+  // Sequence arrays
+  let selectedPortraits = [];
+  let currentRound = 0; // Tracks which of the 2 portraits we are on
+
+  const portraitPaths = [
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize1.png",
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize2.png",
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize3.png",
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize4.png",
+  ];
+
+  const elementPaths = [
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-element1.png", // [0] Black
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-element2.png", // [1] Black
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-element3.png", // [2] Black
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-element4.png", // [3] White
+    "assets/COMM2754-2026-S2-A3w12-Amigos4-element5.png", // [4] White
+  ];
+
+  const CANVAS_W = 400;
+  const CANVAS_H = 500;
+  const GRID_STEP = 9;
+
+  // Interactive Dusting variables
+  let STATE = "dusting"; // States: dusting, waiting (popup), corrupted
+  let dustBuffer;
+  let dustGrid = [];
+  const DUST_GRID_SIZE = 12;
+
+  // How "finished" the dust filter needs to be before the completion
+  // popup appears. 1.0 = every grid cell dusted off. A circular brush
+  // rarely reaches every single corner cell, so 0.98 reads as "the
+  // whole filter is gone" without forcing pixel-hunting. Raise this to
+  // 1.0 if you want a literal 100% requirement.
+  const DUST_CLEAR_THRESHOLD = 0.98;
+
+  // Processing variables
+  let dots = [];
+  let isCorrupted = false;
+  let elementSizeMultiplier = 1;
+
+  p.setup = async () => {
+    portraitImgs = await Promise.all(portraitPaths.map((path) => p.loadImage(path)));
+    elementImgs = await Promise.all(elementPaths.map((path) => p.loadImage(path)));
+
+    const container = document.querySelector('.mainCanvas');
+    const currentWidth = container ? container.clientWidth : 400;
+
+    aspectRatio = CANVAS_H / CANVAS_W;
+    const currentHeight = currentWidth * aspectRatio;
+
+    const canvas = p.createCanvas(currentWidth, currentHeight);
+    if (container) {
+      canvas.parent(container);
+      container.style.position = 'relative'; // Ensure popups position correctly
+    }
+
+    p.imageMode(p.CENTER);
+    p.angleMode(p.DEGREES);
+    p.pixelDensity(1);
+    p.noStroke();
+
+    // Pick 2 random portraits for this turn
+    selectedPortraits = p.shuffle([0, 1, 2, 3]).slice(0, 2);
+
+    createUIOverlays();
+    buildDotsForPortrait(selectedPortraits[currentRound]);
+    setupDustBuffer();
+  };
+
+  p.draw = () => {
+    if (isCorrupted) return; // Stop drawing during corruption
+
+    // BLUE BACKGROUND
+    p.background('#0000FF');
+
+    const scaleFactor = p.width / CANVAS_W;
+    p.push();
+    p.scale(scaleFactor);
+
+    // 1. Draw static elements (No blooming animation)
+    for (const d of dots) {
+      p.push();
+      p.translate(d.x, d.y);
+      p.rotate(d.rot);
+      const s = d.baseSize * elementSizeMultiplier;
+      drawElementPreservingAspect(elementImgs[d.elIndex], s);
+      p.pop();
+    }
+    p.pop();
+
+    // 2. Erase dust if user hovers
+    if (STATE === "dusting") {
+      const isMouseOver = p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height;
+      if (isMouseOver) {
+        document.getElementById('instruction-popup').style.display = 'none';
+
+        dustBuffer.erase();
+        dustBuffer.noStroke();
+        dustBuffer.fill(255);
+        // Duster size: 40% of the canvas width
+        dustBuffer.circle(p.mouseX, p.mouseY, p.width * 0.4);
+        dustBuffer.noErase();
+
+        checkDustProgress();
+      }
+    }
+
+    // 3. Draw dust overlay over elements
+    p.imageMode(p.CORNER);
+    p.image(dustBuffer, 0, 0, p.width, p.height);
+    p.imageMode(p.CENTER);
+  };
+
+  p.windowResized = () => {
+    const container = document.querySelector('.mainCanvas');
+    if (container) {
+      const newWidth = container.clientWidth;
+      p.resizeCanvas(newWidth, newWidth * aspectRatio);
+      if (dustBuffer) dustBuffer.resizeCanvas(p.width, p.height);
+    }
+  };
+
+  // --- LOGIC: DUST & PROGRESS --- //
+  function setupDustBuffer() {
+    dustBuffer = p.createGraphics(p.width, p.height);
+    dustBuffer.background(220);
+    dustBuffer.loadPixels();
+    // Create noisy dust texture
+    for (let i = 0; i < dustBuffer.pixels.length; i += 4) {
+      let noiseVal = p.random(120, 200);
+      dustBuffer.pixels[i] = noiseVal;
+      dustBuffer.pixels[i + 1] = noiseVal;
+      dustBuffer.pixels[i + 2] = noiseVal;
+      dustBuffer.pixels[i + 3] = 255;
+    }
+    dustBuffer.updatePixels();
+    dustBuffer.filter(p.BLUR, 4); // Blurry filter
+
+    dustGrid = Array(DUST_GRID_SIZE * DUST_GRID_SIZE).fill(false);
+  }
+
+  function checkDustProgress() {
+    let cx = Math.floor((p.mouseX / p.width) * DUST_GRID_SIZE);
+    let cy = Math.floor((p.mouseY / p.height) * DUST_GRID_SIZE);
+    let brushRadius = (0.4 / 2) * DUST_GRID_SIZE;
+
+    let cleared = 0;
+    for (let x = 0; x < DUST_GRID_SIZE; x++) {
+      for (let y = 0; y < DUST_GRID_SIZE; y++) {
+        if (!dustGrid[x + y * DUST_GRID_SIZE]) {
+          if (p.dist(cx, cy, x, y) <= brushRadius) {
+            dustGrid[x + y * DUST_GRID_SIZE] = true;
+          }
+        }
+        if (dustGrid[x + y * DUST_GRID_SIZE]) cleared++;
+      }
+    }
+
+    // Only pop the "cleared" message once the WHOLE filter is dusted off
+    if (cleared / (DUST_GRID_SIZE * DUST_GRID_SIZE) >= DUST_CLEAR_THRESHOLD) {
+      STATE = "waiting";
+      document.getElementById('completion-popup').style.display = 'block';
+    }
+  }
+
+  // --- LOGIC: PORTRAIT BUILDING --- //
+  function buildDotsForPortrait(idx) {
+    dots = [];
+
+    // 1. SELECT ELEMENTS: 2 random elements for Black, 1 for White
+    const blackElements = p.shuffle([0, 1, 2]).slice(0, 2);
+    const whiteElement = p.random([3, 4]);
+
+    const img = portraitImgs[idx];
+    const g = p.createGraphics(CANVAS_W, CANVAS_H);
+    g.imageMode(p.CORNER);
+    g.background(255);
+
+    const scaleFactor = Math.max(CANVAS_W / img.width, CANVAS_H / img.height);
+    const dw = img.width * scaleFactor;
+    const dh = img.height * scaleFactor;
+    const dx = (CANVAS_W - dw) / 2;
+    const dy = (CANVAS_H - dh) / 2;
+    g.image(img, dx, dy, dw, dh);
+    g.loadPixels();
+
+    const candidates = [];
+
+    for (let y = 0; y < CANVAS_H; y += GRID_STEP) {
+      for (let x = 0; x < CANVAS_W; x += GRID_STEP) {
+        const i = 4 * (y * CANVAS_W + x);
+        const pixelBrightness = (g.pixels[i] + g.pixels[i + 1] + g.pixels[i + 2]) / 3;
+
+        if (g.pixels[i + 3] > 10) {
+          candidates.push({ x, y, isBlackSection: pixelBrightness < 128 });
+        }
+      }
+    }
+
+    g.remove();
+    p.shuffle(candidates, true);
+
+    for (let i = 0; i < candidates.length; i++) {
+      const pt = candidates[i];
+      const elIndex = pt.isBlackSection ? p.random(blackElements) : whiteElement;
+
+      // Randomize sizes varies from 50%, 100%, 150%
+      const scaleVariation = p.random([0.5, 1.0, 1.5]);
+
+      dots.push({
+        x: pt.x + p.random(-GRID_STEP * 0.35, GRID_STEP * 0.35),
+        y: pt.y + p.random(-GRID_STEP * 0.35, GRID_STEP * 0.35),
+        baseSize: p.random(GRID_STEP * 1.2, GRID_STEP * 2.1) * scaleVariation,
+        rot: p.random(360),
+        elIndex: elIndex,
+      });
+    }
+  }
+
+  function drawElementPreservingAspect(elementImg, size) {
+    const elAspect = elementImg.width / elementImg.height;
+    const targetW = elAspect >= 1 ? size : size * elAspect;
+    const targetH = elAspect >= 1 ? size / elAspect : size;
+    p.image(elementImg, 0, 0, targetW, targetH);
+  }
+
+  // --- LOGIC: UI OVERLAYS (dusting-related popups only) --- //
+  function createUIOverlays() {
+    const container = document.querySelector('.mainCanvas') || document.body;
+
+    // Instruction Hover Ad
+    const instruction = document.createElement('div');
+    instruction.id = 'instruction-popup';
+    instruction.style.cssText = `
+      position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+      background: #f4f4f4; border: 2px solid #3700C0; padding: 10px; font-weight: bold;
+      z-index: 10; pointer-events: none; font-size: 12px; box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+    `;
+    instruction.innerHTML = 'hover your duster to see <em>them</em> clearer';
+    container.appendChild(instruction);
+
+    // Completion Popup Ad
+    const completion = document.createElement('div');
+    completion.id = 'completion-popup';
+    completion.style.cssText = `
+      display: none; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+      background: white; border: 3px solid #3700C0; padding: 20px; z-index: 20;
+      text-align: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.4); width: 80%;
+    `;
+    completion.innerHTML = `
+      <h3 style="color: #3700C0; margin-top: 0;">That clears up the atmosphere!</h3>
+      <p style="font-size: 14px; color: #444;"><i>but did you see the person beneath it?</i></p>
+      <button id="move-on-btn" style="background: #3700C0; color: white; border: none; padding: 8px 16px; cursor: pointer; font-weight: bold; margin-top: 10px;">Move on?</button>
+    `;
+    container.appendChild(completion);
+
+    document.getElementById('move-on-btn').addEventListener('click', () => {
+      document.getElementById('completion-popup').style.display = 'none';
+      currentRound++;
+
+      if (currentRound < 2) {
+        // Move to the 2nd portrait
+        buildDotsForPortrait(selectedPortraits[currentRound]);
+        setupDustBuffer();
+        document.getElementById('instruction-popup').style.display = 'block';
+        STATE = "dusting";
+      } else {
+        // Limit reached: stop the sketch and hand off to the
+        // corruption sequence (see corruption.js)
+        isCorrupted = true;
+        STATE = "corrupted";
+
+        if (typeof window.triggerCorruption === "function") {
+          window.triggerCorruption();
+        } else {
+          console.error(
+            "corruption.js not found — make sure it's linked in your HTML before this sketch runs its course."
+          );
+        }
+      }
+    });
+  }
+};
+
+new p5(myMainCanvasSketch);

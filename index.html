@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.2/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/dist/p5.sound.min.js"></script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Pareidolia</title>
+
+    <link rel="stylesheet" href="style.css"
+     />
+    <link rel="stylesheet" href="corruption.css"
+     />
+  </head>
+
+  <body>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-inner">
+        <strong>Amigos 4.0</strong>
+
+        <nav>
+          <div class="navBtn"><a href="#">Search</a></div>
+          <div class="navBtn active"><a href="#">Blog</a></div>
+          <div class="navBtn"><a href="#">Games</a></div>
+          <div class="navBtn"><a href="#">Messenger</a></div>
+        </nav>
+
+        <button>What's New?</button>
+      </div>
+    </div>
+
+    <main class="page">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="brand">AMIGOS!<span>Messenger</span></div>
+
+        <div class="search">
+          <label>Search the Web:</label>
+          <input placeholder="Search..." />
+          <button>Search</button>
+        </div>
+
+        <nav class="main-nav">
+          <a>Home</a>
+          <a>My Page</a>
+          <a>My Blog</a>
+          <a>My Friends</a>
+          <a>Mailbox</a>
+          <a>Settings</a>
+        </nav>
+      </header>
+
+      <!-- BANNER -->
+      <div class="banner"></div>
+
+      <!-- MAIN 3 COLUMN LAYOUT -->
+      <section class="layout">
+        <!-- LEFT COLUMN -->
+        <aside class="left-column">
+          <div class="ad box">
+            <small>ADVERTISEMENT</small>
+
+            <h4>TIN NONG!!!! Trung 10 ti dong ngay lap tuc </h4>
+            <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-ads1.png" alt="ads1" class="ads1" />
+            <p>Bam vao nut nay de xem cach nhan thuong <br>
+              <i>Press this button so you can win prizes</i>
+            </p>
+
+            <button>CLICK HERE</button>
+          </div>
+
+          <div class="widget box mini-login">
+            <h3>Welcome to <span style="color: #3700C0;">Amigos! Messenger</h3> 
+            <p><span style="color: #807b79;">None of your friends are online right now</span></p>
+
+            <h3> <span style="color: #3700C0;">Please come back at another time</h3>
+
+            <small>◉ Find Friends</small><br>
+
+            <small>◉ Friends are unavailable </small> <br>
+            <small>◉ Reach out to them</small><br>
+            <br>
+            <medium>◉ Check your messages</medium><br>
+            <>◉ See them for who they are</>
+           
+          </div>
+
+          <div class="comments box">
+            <h2>TOP FORUM COMMENTER</h2>
+
+            <p>
+             
+               <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-pic1.jpg", max width="30", height="30", alt="Bao", class="pic1" /> ♂: c0' iU to^y k0 zaa? <br> <i>(screwthislife♂: do you love me??)</i> <br>
+              <br>
+              <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-pic2.jpg", max width="30", height="30", alt="Hang", class="pic2" /> 
+              c0n_chi3n_dUk_d0: pkuc cjo nhung ai k0 thAy ma Tin <br> <i>(Christ_is_Life: Blessed are those who have not seen and yet believe)</i> <br>
+              <br>
+              <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-pic3.jpg", max width="30", height="30", alt="Dan", class="pic3" />
+              L0`ng_t0^i_tan_nat_Khi_nhanRaToiLagay ♂: c0' ae nao bik Kara co dao nam k0 ak? ib kin' <br> 
+               <br>
+               <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-ads4.png", max width="30", height="30", alt="Dan", class="pic4" />
+              <i>(Myheartbrokewhen11irealizedimgay  ♂: any bros know a karaoke with "male" staffs? DM me privately</i> <br>
+               <br>
+              Toicantrogiup: co ai biet cac co so giup do cac ban tre nghien ma tuy o HCM k0? <br> <i>(Iwanttohelp: does anyone know any rehab centers for young drug addicts in HCM?</i>
+            </p>
+          </div>
+
+          <div class="missing-relatives">
+                          <h3><span style="color: red;">Missing People,</span> - Please contact if you have any information</h3>
+
+            <div class="missing-relatives-content">
+              <p> <span style="color: aliceblue;">
+                <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize1.png", max width="30", height="30", alt="Bao", class="pic5" /> 
+                <b>Hoang Van A</b> - 20 years old, missing since 2020. Last seen in Ho Chi Minh City. Contact 0********54 if you have any information. <br>
+                <br>
+                <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize2.png", max width="30", height="30", alt="Hang", class="pic6" /> 
+              <b>Tran Thi H</b> - 13 years old, missing since 2019. Last seen in Hanoi. Contact 0********36 if you have any information. <br>
+              <br>
+              <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize3.png", max width="30", height="30", alt="Dan", class="pic7" /> 
+              <b>Le Nguyen Binh P</b> - 16 years old, missing since 2021. Last seen in Da Nang. Contact 0********18 if you have any information. <br>
+              <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-portrait-resize4.png", max width="30", height="30", alt="Dan", class="pic8" /> 
+              <b>Pham Thi Hoang A</b> - 18 years old, missing since 2022. Last seen in Can Tho. Contact 0********27 if you have any information. <br>
+            </span>
+            </p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CENTRE COLUMN -->
+        <section class="centre-column">
+          <!-- p5.js canvas -->
+          <div class="mainCanvas"><!--change to your canvas name--></div>
+
+          <div class="info-grid"><!--other things under your canvas--></div>
+
+          <div class="footer">
+          <p>COMM2754, Digital Media Specialisation 1, Semester 2 2026</p>
+          <p>
+            RMIT University Vietnam, Saigon South Campus, School of Communication and Design, Digital Media Program 
+          </p>
+          </div>
+        </section>
+        <!--rm, comm-->
+
+        <!-- RIGHT COLUMN -->
+        <aside class="right-column">
+          <!-- QUOTE -->
+          <div class="quote box">
+            <h3>Cau noi hay cho ngay moi
+              <i> (A good quote for a new day)</i>
+            </h3> 
+
+            <p>
+              “I finally summed up the courage to say the words that would
+              change my life: I need help.”
+            </p>
+
+            <p>- Elton John</p>
+          </div>
+
+          <!-- PROMO -->
+          <div class="promo-box">
+            <div class="ads"></div>
+            <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-ads3.png" alt="ads3" class="ads3" />
+        
+            
+          </div>
+
+          <!-- TOPICS -->
+          <div class="topics box">
+            <h3>★ Chat ★</h3>
+
+            <form class="topics-chat" aria-label="Chat with unavailable person">
+              <label for="topics-chat-input">Send a message to them</label>
+              <div class="topics-chat-compose">
+                <input id="topics-chat-input" class="chat-input" type="text" placeholder="Type a message..." autocomplete="off" />
+                <button class="composer-enter" type="submit">Send</button>
+              </div>
+              <div class="chat-notifications" aria-live="polite"></div>
+            </form>
+
+            <!-- Add your notification sound as a source inside this audio element. -->
+            <audio id="unavailable-notification-sound" preload="auto"></audio>
+          </div>
+
+          <!-- HOT TOPIC -->
+          <div class="hot box">
+            <p>
+              <a href="https://www.unodc.org/romena/en/SDG/sdg-3_-ensure-healthy-lives-and-promote-well-being-for-all-at-all-ages.html" target="_blank" title="seek help as soon as possible">UNODC: SDG 3 - Ensure healthy lives and promote well-being for all at all ages</a>
+              <a href="https://www.sciencedirect.com/science/article/pii/S0033350625002173?getft_integrator=wiley&pes=vor&utm_source=wiley#sec4 " target="_blank" title="affect of social media on mental health">ScienceDirect: The impact of social media on adolescent mental health: A systematic review</a>
+            </p>
+
+            <b>Hot TOPIC</b>
+          </div>
+
+          <div class="famous-teens">
+            
+          </div>
+
+          <!-- GAMES -->
+          <div class="games box">
+            <b> <span style="color: rgb(116, 80, 13);"> FIND A PLUMBER? AVAILABLE NOW </span></b>
+            <img src="assets/COMM2754-2026-S2-A3w12-Amigos4-ads4.png" alt="ads4" class="ads4" />
+            <p><span style="font-weight: bold;">No more worries when your plumbing needs are met.</span></p>
+            <div>
+              <p>
+
+            <h2><span style="font-family: Georgia, 'Times New Roman', Times, serif;">Amigos!4.0</span></h2>
+            <p><span style="font-family: Georgia, 'Times New Roman', Times, serif;">The best way to connect with your friends and family.</span></p>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <!-- UI, Corruption logic, and Sketch Execution -->
+    <script src="sketchUI.js"></script>
+    <script src="corruption.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>
