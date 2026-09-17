@@ -402,6 +402,8 @@ body {
     minmax(0, 0.6fr)
     minmax(0, 1.8fr)
     minmax(0, 0.6fr);
+  background-color: #af9bcf;
+border: 6px solid #af9bcf;
   gap: 6 px;
   align-items: start;
 }
